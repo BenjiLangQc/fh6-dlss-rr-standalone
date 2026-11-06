@@ -1,0 +1,9 @@
+# Build outputs (build.bat regenerates them)
+build/
+
+# MinHook clone, fetched at a pinned commit by fetch_deps.bat
+external/minhook/
+
+# Runtime files if the mod is ever run from here
+*.log
+fh6rr.ini
