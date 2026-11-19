@@ -35,6 +35,11 @@ gi_ao=2       ; raw GI occlusion from ray hit distance: 0 = off, 1 = soft 0.25 m
 
 Works with RTSS / MSI Afterburner overlays and DLSS frame generation.
 
+## Recommended: Ray Reconstruction preset F
+For the best denoising quality, set DLSS Ray Reconstruction to **preset F** in the NVIDIA app: Graphics >
+Program Settings > Forza Horizon 6 > DLSS Override - Model Presets > Ray Reconstruction. In testing it gave
+clearly cleaner results than the default, especially in cockpit view.
+
 ## How it works
 1. **Loading:** the mod is a proxy `xinput1_3.dll`, which FH6 imports, so it loads before Streamline initializes.
 2. **Ray Reconstruction:** hooks Streamline's `slInit` and adds DLSS Ray Reconstruction (`kFeatureDLSS_RR`) to the
@@ -57,5 +62,5 @@ Third-party code in `external/`: NVIDIA Streamline headers (MIT), MinHook (BSD-2
 - Tied to the current FH6 build: the GI shader identities and G-buffer layout can change with a game patch.
   If the GI shaders change, the bypass simply stays inactive (RR still works).
 - Colour speckles in thin, partly hidden areas (for example between the steering wheel and the dash in cockpit
-  view) come from Ray Reconstruction's model. Selecting RR preset F in the NVIDIA app reduced them a lot in testing.
+  view) come from Ray Reconstruction's model; RR preset F (see above) reduces them a lot.
 - Scalar specular (flagged materials) uses F0 = 0.04; RT6 colored F0 is used where the game uses it.
