@@ -56,4 +56,6 @@ Third-party code in `external/`: NVIDIA Streamline headers (MIT), MinHook (BSD-2
 ## Known limits
 - Tied to the current FH6 build: the GI shader identities and G-buffer layout can change with a game patch.
   If the GI shaders change, the bypass simply stays inactive (RR still works).
+- Colour speckles in thin, partly hidden areas (for example between the steering wheel and the dash in cockpit
+  view) come from Ray Reconstruction's model. Selecting RR preset F in the NVIDIA app reduced them a lot in testing.
 - Scalar specular (flagged materials) uses F0 = 0.04; RT6 colored F0 is used where the game uses it.
