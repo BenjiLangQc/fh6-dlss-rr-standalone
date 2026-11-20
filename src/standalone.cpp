@@ -61,6 +61,7 @@ struct Config
 	bool gi_bypass = true;
 	int gi_scale = 0;
 	int gi_ao = 2;
+	int rr_preset = 0; // RR model: 0 = game/driver default, 4 = preset D, 5 = preset E
 	bool hook_device = true; // diagnostics: D3D12 device hooks (pipeline creation, RTVs)
 	bool hook_lists = true;  // diagnostics: D3D12 command list hooks (bypass dispatches, G-buffer binds)
 };
@@ -84,7 +85,9 @@ static void load_config()
 				"; Raw GI brightness: 0 = x1 (matches the game), 1 = xPI, 2 = x2, 3 = x0.5\n"
 				"gi_scale=0\n"
 				"; Raw GI occlusion from ray hit distance: 0 = off, 1 = soft 0.25 m, 2 = soft 1 m (matches the game), 3 = hard 1.5 m\n"
-				"gi_ao=2\n", f);
+				"gi_ao=2\n"
+				"; Ray Reconstruction model: 0 = game/driver default (NVIDIA app override applies), 4 = preset D, 5 = preset E\n"
+				"rr_preset=0\n", f);
 			fclose(f);
 		}
 	}
@@ -93,11 +96,13 @@ static void load_config()
 	g_cfg.gi_bypass = get(L"gi_bypass", 1) != 0;
 	g_cfg.gi_scale = std::clamp(get(L"gi_scale", 0), 0, 3);
 	g_cfg.gi_ao = std::clamp(get(L"gi_ao", 2), 0, 3);
+	g_cfg.rr_preset = get(L"rr_preset", 0);
+	if (g_cfg.rr_preset != 4 && g_cfg.rr_preset != 5) g_cfg.rr_preset = 0;
 	g_cfg.hook_device = get(L"hook_device", 1) != 0;
 	g_cfg.hook_lists = get(L"hook_lists", 1) != 0;
 	g_swap_gi = g_cfg.gi_bypass && g_cfg.rr;
-	logf("config: rr=%d gi_bypass=%d gi_scale=%d gi_ao=%d hook_device=%d hook_lists=%d (no hotkeys in the standalone version: restart to apply changes)",
-		g_cfg.rr, g_cfg.gi_bypass, g_cfg.gi_scale, g_cfg.gi_ao, g_cfg.hook_device, g_cfg.hook_lists);
+	logf("config: rr=%d gi_bypass=%d gi_scale=%d gi_ao=%d rr_preset=%d hook_device=%d hook_lists=%d (no hotkeys in the standalone version: restart to apply changes)",
+		g_cfg.rr, g_cfg.gi_bypass, g_cfg.gi_scale, g_cfg.gi_ao, g_cfg.rr_preset, g_cfg.hook_device, g_cfg.hook_lists);
 }
 
 static uint64_t fnv1a(const void *data, size_t size)
@@ -922,6 +927,7 @@ void fh6rr_standalone_init(HMODULE self)
 	logf("FH6 DLSS Ray Reconstruction (standalone) loaded");
 	load_config();
 	rr::set_enabled(g_cfg.rr);
+	rr::set_preset(g_cfg.rr_preset);
 	gi::set_enabled(g_cfg.gi_bypass);
 	gi::set_scale(g_cfg.gi_scale);
 	gi::set_ao(g_cfg.gi_ao);

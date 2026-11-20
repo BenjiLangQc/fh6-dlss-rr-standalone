@@ -31,6 +31,7 @@ rr=1          ; DLSS Ray Reconstruction on (1) or off (0)
 gi_bypass=1   ; bypass the game's GI denoiser so RR denoises the raw GI (needs rr=1)
 gi_scale=0    ; raw GI brightness: 0 = x1 (matches the game), 1 = xPI, 2 = x2, 3 = x0.5
 gi_ao=2       ; raw GI occlusion from ray hit distance: 0 = off, 1 = soft 0.25 m, 2 = soft 1 m (matches the game), 3 = hard 1.5 m
+rr_preset=0   ; RR model: 0 = game / NVIDIA app default, 4 = preset D, 5 = preset E
 ```
 
 Works with RTSS / MSI Afterburner overlays and DLSS frame generation.
@@ -63,4 +64,6 @@ Third-party code in `external/`: NVIDIA Streamline headers (MIT), MinHook (BSD-2
   If the GI shaders change, the bypass simply stays inactive (RR still works).
 - Colour speckles in thin, partly hidden areas (for example between the steering wheel and the dash in cockpit
   view) come from Ray Reconstruction's model; RR preset F (see above) reduces them a lot.
-- Scalar specular (flagged materials) uses F0 = 0.04; RT6 colored F0 is used where the game uses it.
+- The RR guides use a constant specular F0 of 0.04 (dielectric) for every material. Using the game's per-material
+  F0 put seams on roads and car interiors and dark blotches on black panels after RR; metal parts showed no visible
+  difference with 0.04. Details in `notes/phase2_findings.md`.
